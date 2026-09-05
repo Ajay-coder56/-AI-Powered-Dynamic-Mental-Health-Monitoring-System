@@ -133,19 +133,20 @@ Phase 3G ─── Alerts / Early Warning
 
 ---
 
-## Phase 3F — Explainability
+## Phase 3F — Explainability & Decision Support ✓
 
-**Status**: NOT STARTED
+**Status**: COMPLETE
 
-**Goal**: Provide SHAP/LIME-style model explanations for AI-generated risk scores.
+**Goal**: Provide transparent, human-readable explanations of risk assessments for counsellors.
 
 **Planned Work**:
-- Implement `ExplainabilityEngine` interface
-- SHAP-based feature importance
-- LIME-based local explanations
-- Counterfactual explanations
-- Visual explanation data for counsellor dashboard
-- Natural language explanation generation
+- Replaced SHAP/LIME placeholders with a robust deterministic rule-based explainability engine.
+- Implemented human-readable baseline domain contributions.
+- Surfaced modality fusion logic, missing modalities, and signal conflicts.
+- Connected longitudinal temporal explanations.
+- Created `GET /api/v1/cases/{case_id}/explanation` counsellor API.
+- Rebuilt frontend `CaseDetailPage` to consume and display AI decision support.
+- Maintained strict non-clinical engineering claims.
 
 **Interface**: `ExplainabilityEngine` (defined in `risk_engine/interface.py`)
 **Module**: `ai/explainability/`

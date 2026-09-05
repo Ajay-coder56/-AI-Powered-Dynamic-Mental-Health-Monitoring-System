@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getCaseExplanation, ExplainabilityResult } from "../../services/counsellor";
 import {
   Card,
   Button,
@@ -139,6 +140,7 @@ export default function CaseDetailPage({ caseId, onBack }: CaseDetailPageProps) 
 
       {activeTab === "overview" && (
         <div className="flex flex-col gap-6">
+          <RiskExplanationSection caseId={c.id} />
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
             {/* Trend chart */}
             <div className="xl:col-span-2">
@@ -501,5 +503,86 @@ export default function CaseDetailPage({ caseId, onBack }: CaseDetailPageProps) 
         </div>
       </Modal>
     </div>
+  );
+}
+
+function RiskExplanationSection({ caseId }: { caseId: string }) {
+  const [data, setData] = useState<ExplainabilityResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    getCaseExplanation(caseId)
+      .then(setData)
+      .catch((e) => {
+        console.error(e);
+        setError(true);
+      })
+      .finally(() => setLoading(false));
+  }, [caseId]);
+
+  if (loading) return <div className="p-4 text-slate-500">Loading risk explanation...</div>;
+  if (error || !data) return <div className="p-4 text-slate-500">Note: API Risk explanation data not available for this sample case.</div>;
+
+  return (
+    <Card padding="lg" className="border-purple-100 bg-purple-50/50">
+      <SectionHeader title="Phase 3F: AI Decision Support" subtitle="Deterministically derived explainability" />
+      <div className="mt-4 space-y-6">
+        <div>
+          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Current Assessment</h4>
+          <p className="text-sm text-slate-700">
+            <strong>Score:</strong> {data.risk_score} (Level: {data.risk_level}) <br/>
+            <strong>Reliability:</strong> {data.reliability}
+          </p>
+        </div>
+        <div>
+          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Why this score</h4>
+          <ul className="list-disc list-inside text-sm text-slate-700 space-y-1">
+            {data.top_contributing_factors.map((f, i) => (
+              <li key={i}><strong>{f.domain.replace('_', ' ')}:</strong> {f.reason} ({f.contribution_level})</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Multimodal Signals</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {data.modality_contributions.map((m, i) => (
+              <div key={i} className="bg-white p-3 rounded shadow-sm border border-slate-100">
+                <strong className="capitalize text-navy-800">{m.modality}</strong>
+                <p className="text-xs text-slate-500 mt-1">{m.availability}</p>
+                {m.availability === 'Available' && <p className="text-xs text-slate-600">Contribution: {m.contribution}</p>}
+                <p className="text-xs text-slate-600 mt-1">{m.reason}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        {data.temporal_summary && (
+          <div>
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Trajectory</h4>
+            <p className="text-sm text-slate-700">
+              <strong>Trend:</strong> {data.temporal_summary.trend.toUpperCase()} <br/>
+              <strong>Status:</strong> {data.temporal_summary.early_warning_status.toUpperCase()} <br/>
+              <strong>Explanation:</strong> {data.temporal_summary.explanation}
+            </p>
+          </div>
+        )}
+        <div>
+           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Data Quality</h4>
+           <p className="text-sm text-slate-700">
+             {data.missing_modalities.length > 0 && <span>Missing: {data.missing_modalities.join(', ')}<br/></span>}
+             {data.conflicting_modalities && <span className="text-orange-600 font-semibold">Conflict Detected: Signals show disagreement.<br/></span>}
+             {!data.conflicting_modalities && data.missing_modalities.length === 0 && <span>All signals available and consistent.</span>}
+           </p>
+        </div>
+        <div className="bg-blue-50 p-3 rounded border border-blue-100">
+          <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">Counsellor Review Guidance</h4>
+          <p className="text-sm text-blue-900">{data.human_review_note}</p>
+        </div>
+        <div className="bg-slate-100 p-3 rounded border border-slate-200">
+          <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Limitations</h4>
+          <p className="text-xs text-slate-600 leading-relaxed">{data.limitations}</p>
+        </div>
+      </div>
+    </Card>
   );
 }

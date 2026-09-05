@@ -129,12 +129,17 @@ async def submit_check_in(
     risk_service = get_risk_engine_service()
     risk_result = risk_service.evaluate(risk_input)
 
+    # Inject fusion analysis into answers for Phase 3F Explainability retrieval
+    answers = body.answers or {}
+    if risk_result.fusion_analysis:
+        answers["fusion_analysis"] = risk_result.fusion_analysis
+
     # Create check-in record (same DB fields as before)
     check_in = CheckInSession(
         user_id=user.id,
         case_id=user.case_id,
         mode=body.mode.value,
-        answers=body.answers,
+        answers=answers,
         raw_score=risk_result.raw_score,
         wellbeing_score=risk_result.wellbeing_score,
         risk_level=risk_result.risk_level.value,
@@ -247,12 +252,17 @@ async def submit_voice_check_in(
     risk_service = get_risk_engine_service()
     risk_result = risk_service.evaluate(risk_input)
 
+    answers = {}
+    if risk_result.fusion_analysis:
+        answers["fusion_analysis"] = risk_result.fusion_analysis
+
     # Save CheckIn
     from app.models.check_in import CheckInSession, CheckInDomain
     check_in = CheckInSession(
         user_id=user.id,
         case_id=user.case_id,
         mode="voice",
+        answers=answers,
         raw_score=risk_result.raw_score,
         wellbeing_score=risk_result.wellbeing_score,
         risk_level=risk_result.risk_level.value,
