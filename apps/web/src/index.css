@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Noto Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-navy-50: #EEF2FF;
+  --color-navy-100: #E0E7FF;
+  --color-navy-200: #C7D2FE;
+  --color-navy-500: #3B5BDB;
+  --color-navy-600: #2B4AC8;
+  --color-navy-700: #1E3A8A;
+  --color-navy-800: #1B3270;
+  --color-navy-900: #162660;
+  --color-navy-950: #0D1B45;
+
+  --color-safe-50: #F0FDF4;
+  --color-safe-100: #DCFCE7;
+  --color-safe-500: #22C55E;
+  --color-safe-600: #16A34A;
+  --color-safe-700: #15803D;
+
+  --color-risk-50: #FFFBEB;
+  --color-risk-100: #FEF3C7;
+  --color-risk-500: #F59E0B;
+  --color-risk-600: #D97706;
+  --color-risk-700: #B45309;
+
+  --color-critical-50: #FFF1F2;
+  --color-critical-100: #FFE4E6;
+  --color-critical-500: #F43F5E;
+  --color-critical-600: #E11D48;
+  --color-critical-700: #BE123C;
+
+  --color-surface: #F7F9FC;
+  --color-surface-2: #EEF2F7;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  font-family: 'Noto Sans', sans-serif;
+  background-color: #F7F9FC;
+  /* Boosted from #0D1B45 — near-black for maximum contrast on light surfaces */
+  color: #0A1628;
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #94A3B8 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #94A3B8;
+  border-radius: 4px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  /* Slightly heavier tracking for display headings */
+  letter-spacing: -0.01em;
+  color: inherit;
+}
+
+.font-display {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-mono-data {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ─── High-contrast text helpers ─────────────────────────────────────
+   Use these classes when Tailwind navy-* palette colours are too dim.
+   Especially important for text on dark (navy-900/950) backgrounds.
+──────────────────────────────────────────────────────────────────── */
+
+/* Primary body text on dark bg — pure white */
+.text-on-dark {
+  color: #FFFFFF;
+}
+
+/* Secondary / supporting text on dark bg — warm off-white, clearly legible */
+.text-on-dark-secondary {
+  color: #CBD5E1; /* slate-300 — replaces dim navy-300/400 */
+}
+
+/* Muted / caption text on dark bg — still passes WCAG AA */
+.text-on-dark-muted {
+  color: #94A3B8; /* slate-400 — replaces invisible navy-500/600 */
+}
+
+/* Primary text on light bg */
+.text-on-light {
+  color: #0A1628;
+}
+
+/* Secondary text on light bg */
+.text-on-light-secondary {
+  color: #334155; /* slate-700 */
+}
+
+/* Muted text on light bg — still WCAG AA compliant */
+.text-on-light-muted {
+  color: #64748B; /* slate-500 */
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.12); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+@keyframes wave {
+  0%, 100% { height: 8px; }
+  50% { height: 28px; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+.animate-wave-1 { animation: wave 0.9s ease-in-out infinite; }
+.animate-wave-2 { animation: wave 0.9s ease-in-out infinite 0.15s; }
+.animate-wave-3 { animation: wave 0.9s ease-in-out infinite 0.3s; }
+.animate-wave-4 { animation: wave 0.9s ease-in-out infinite 0.45s; }
+.animate-wave-5 { animation: wave 0.9s ease-in-out infinite 0.6s; }
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
+.transition-smooth {
+  transition: all 0.2s ease;
+}

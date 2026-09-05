@@ -1,0 +1,11 @@
+{
+  "title": "MindSafe",
+  "description": "AI Mental Health Monitoring",
+  "language": "en",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": true
+  }
+}

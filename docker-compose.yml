@@ -1,0 +1,59 @@
+# ============================================================
+# MindSafe — Docker Compose (Development)
+# ============================================================
+# Usage: docker compose up -d
+# pgAdmin: http://localhost:5050  (admin@mindsafe.dev / admin)
+# ============================================================
+
+services:
+  # ───────────────────────────────────────────────
+  # PostgreSQL 16
+  # ───────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: mindsafe-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mindsafe}
+      POSTGRES_USER: ${POSTGRES_USER:-mindsafe_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_dev_only}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seeds/001_demo_data.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mindsafe_admin} -d ${POSTGRES_DB:-mindsafe}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mindsafe-net
+
+  # ───────────────────────────────────────────────
+  # pgAdmin 4 (dev convenience)
+  # ───────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: mindsafe-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mindsafe.dev
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - "5050:5050"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mindsafe-net
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  mindsafe-net:
+    driver: bridge
