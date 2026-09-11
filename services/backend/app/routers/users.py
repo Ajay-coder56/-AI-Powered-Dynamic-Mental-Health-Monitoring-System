@@ -172,6 +172,17 @@ async def submit_check_in(
     await db.commit()
     await db.refresh(check_in)
 
+    # Phase 4: Trigger Alerts Evaluation
+    if user.case_id:
+        try:
+            from app.services.alert_service import trigger_alerts_for_case
+            await trigger_alerts_for_case(db, user.case_id)
+            await db.commit()
+        except Exception as e:
+            # We don't want alert failures to crash the check-in process
+            import logging
+            logging.error(f"Failed to process alerts for case {user.case_id}: {str(e)}")
+
     return CheckInResultResponse(
         check_in_id=check_in.id,
         raw_score=risk_result.raw_score,
@@ -287,6 +298,16 @@ async def submit_voice_check_in(
     await db.commit()
     await db.refresh(check_in)
     
+    # Phase 4: Trigger Alerts Evaluation
+    if user.case_id:
+        try:
+            from app.services.alert_service import trigger_alerts_for_case
+            await trigger_alerts_for_case(db, user.case_id)
+            await db.commit()
+        except Exception as e:
+            import logging
+            logging.error(f"Failed to process alerts for case {user.case_id}: {str(e)}")
+            
     # We do NOT persist the raw audio bytes or save them anywhere in DB.
 
     from app.schemas.check_in import DomainScoreResponse

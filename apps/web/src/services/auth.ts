@@ -12,6 +12,12 @@ export const authService = {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
+    
+    // Store JWT so the axios interceptor can attach it to subsequent requests
+    if (res.data?.access_token) {
+      localStorage.setItem('mindsafe_token', res.data.access_token);
+    }
+    
     return res.data;
   },
 

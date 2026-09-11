@@ -19,7 +19,19 @@ export default function ConsentScreen({ userId, onNext }: Props) {
       onNext();
     } catch (err: any) {
       console.error(err);
-      setError("Failed to record consent. Please try again.");
+      if (err.response) {
+        if (err.response.status === 404) {
+          setError("User or consent endpoint not found.");
+        } else if (err.response.status >= 500) {
+          setError("Unable to save consent. Please try again.");
+        } else {
+          setError(err.response.data?.detail || "Failed to record consent. Please try again.");
+        }
+      } else if (err.request) {
+        setError("Unable to connect to the server. Please check the API gateway.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
       setLoading(false);
     }
   };

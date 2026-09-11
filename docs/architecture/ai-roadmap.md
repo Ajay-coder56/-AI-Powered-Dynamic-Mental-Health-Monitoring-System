@@ -157,17 +157,22 @@ Phase 3G ─── Alerts / Early Warning
 
 ---
 
-## Phase 3G — Alerts / Early Warning
+## Phase 4 — Intervention & Alerts ✓
 
-**Status**: NOT STARTED
+**Status**: COMPLETE
 
-**Goal**: Automated alert generation and counsellor notification based on risk engine outputs.
+**Goal**: Transform AI insights into an actionable triage workflow for counsellors.
 
 **Planned Work**:
-- Alert generation rules based on risk levels and trends
-- Counsellor notification system
-- Escalation protocols for critical risk levels
-- Integration with existing `alerts` table and router
+- Developed `AlertEngine` with deterministic thresholds.
+- Connected Alerts to Explainability and Temporal outputs.
+- Deduplication rule prevents repeated spamming.
+- Added API endpoints for viewing, acknowledging, and resolving alerts.
+- Enforced strict case-level authorization (`Depends(get_current_counsellor)`).
+- Human-in-the-loop: Counsellor decides intervention, AI does not act automatically.
+- Case notes API implemented.
+
+**Module**: `ai/alerts/` table and router
 - Dashboard integration for real-time monitoring
 
 **Prerequisites**: Phase 3E complete. Alert routing infrastructure available.

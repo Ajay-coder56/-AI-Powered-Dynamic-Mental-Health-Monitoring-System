@@ -56,3 +56,38 @@ export const getCaseExplanation = async (caseId: string): Promise<Explainability
   const response = await apiClient.get(`/cases/${caseId}/explanation`);
   return response.data;
 };
+
+export interface AlertResponse {
+  id: string;
+  case_id: string;
+  severity: string;
+  type: string;
+  title: string;
+  message: string;
+  ai_explanation?: string;
+  recommended_actions?: string[];
+  created_at: string;
+  is_read: boolean;
+  is_resolved: boolean;
+}
+
+export const getAlerts = async (): Promise<AlertResponse[]> => {
+  const response = await apiClient.get('/alerts');
+  return response.data;
+};
+
+export const acknowledgeAlert = async (alertId: string): Promise<void> => {
+  await apiClient.post(`/alerts/${alertId}/acknowledge`);
+};
+
+export const resolveAlert = async (alertId: string): Promise<void> => {
+  await apiClient.post(`/alerts/${alertId}/resolve`);
+};
+
+export const dismissAlert = async (alertId: string): Promise<void> => {
+  await apiClient.post(`/alerts/${alertId}/dismiss`);
+};
+
+export const addCaseNote = async (caseId: string, content: string): Promise<void> => {
+  await apiClient.post(`/cases/${caseId}/notes`, { content });
+};

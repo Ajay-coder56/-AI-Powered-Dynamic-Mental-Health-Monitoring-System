@@ -4,7 +4,7 @@ TRUNCATE TABLE consent_logs, notifications, case_notes, hearings, alerts, check_
 
 -- Counsellor
 INSERT INTO counsellors (id, email, password_hash, name, title, city) VALUES 
-('00000000-0000-0000-0000-000000000001', 'dr.meera.iyer@wcd.gov.in', '$2a$10$abcdefghijklmnopqrstuv', 'Dr. Meera Iyer', 'Senior Counsellor', 'Mumbai');
+('00000000-0000-0000-0000-000000000001', 'dr.meera.iyer@wcd.gov.in', '$2b$12$zC0s99HBg./06enUjoHKf.ouhM17dVj.IZ9V/CPVwmJyY7q9sJjQG', 'Dr. Meera Iyer', 'Senior Counsellor', 'Mumbai');
 
 -- Users
 INSERT INTO users (id, phone, name, age, language) VALUES 

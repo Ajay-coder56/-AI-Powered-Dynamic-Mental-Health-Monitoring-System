@@ -2,15 +2,17 @@ import uuid
 from datetime import datetime
 from typing import Optional
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, DateTime, ForeignKey, Boolean, Text, Uuid
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import String, DateTime, ForeignKey, Boolean, Text, Uuid, Enum as SAEnum, text
+from sqlalchemy.dialects.postgresql import JSONB, ENUM
 from app.database import Base
+
+alert_severity_enum = ENUM('low', 'moderate', 'high', 'critical', name='alert_severity_enum', create_type=False)
 
 class Alert(Base):
     __tablename__ = "alerts"
-    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
     case_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid(as_uuid=True), ForeignKey("cases.id", ondelete="CASCADE"), nullable=True)
-    severity: Mapped[str] = mapped_column(String, nullable=False)
+    severity: Mapped[str] = mapped_column(alert_severity_enum, nullable=False)
     type: Mapped[str] = mapped_column(String(255), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)

@@ -21,7 +21,19 @@ export default function CounsellorLoginScreen({ onLogin }: Props) {
       onLogin();
     } catch (err: any) {
       console.error(err);
-      setError("Invalid credentials. Please try again.");
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError("Invalid credentials. Please check your email and password.");
+        } else if (err.response.status >= 500) {
+          setError("Server error. Please try again.");
+        } else {
+          setError(err.response.data?.detail || "Login failed. Please try again.");
+        }
+      } else if (err.request) {
+        setError("Unable to connect to the server. Please check that the backend/API gateway is running.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
       setLoading(false);
     }
   };

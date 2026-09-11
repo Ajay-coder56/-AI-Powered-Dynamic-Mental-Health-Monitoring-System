@@ -1,21 +1,25 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List
+from typing import List, Optional
+import uuid
 
 class AlertBase(BaseModel):
     severity: str
     type: str
     title: str
-    patient_name: str
     message: str
-    ai_explanation: str
-    actions: List[str]
+    ai_explanation: Optional[str] = None
+    recommended_actions: Optional[List[str]] = None
 
 class AlertResponse(AlertBase):
-    id: int
-    case_id: int
-    time: datetime
+    id: uuid.UUID
+    case_id: uuid.UUID
+    created_at: datetime
+    resolved_at: Optional[datetime] = None
     is_read: bool
     is_resolved: bool
+    resolved_by: Optional[uuid.UUID] = None
+    
     class Config:
         from_attributes = True
+

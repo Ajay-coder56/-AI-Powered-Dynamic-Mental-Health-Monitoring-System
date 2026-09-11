@@ -150,6 +150,7 @@ class RiskExplanation(BaseModel):
 
     DISCLAIMER: Explanations are engineering artifacts, not clinical interpretations.
     """
+    model_config = {"protected_namespaces": ()}
     summary: str
     domain_contributions: List[DomainContribution]
     explanation_type: ExplanationType = ExplanationType.deterministic_baseline
